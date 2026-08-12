@@ -1,17 +1,20 @@
-// src/pages/InputPage.tsx — Manual transaction input + category manager
+// src/pages/InputPage.tsx — Manual transaction input + category manager + db.json file storage
 
 import React, { useState, useRef } from 'react';
 import { useTransactionStore } from '../store/transactionStore';
 import type { Transaction, Category } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 import { importCSV } from '../data/importers/csvImporter';
+import { exportBackupJSON, importBackupJSON, resetFileDatabase } from '../services/backupService';
+import { IconPlus, IconFileText, IconTrash, IconInput, IconCheck, IconDownload, IconRefresh } from '../components/common/Icons';
 
 const formatVND = (n: number) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n);
 
 export default function InputPage() {
-  const { transactions, categories, addTransaction, deleteTransaction, addCategory, deleteCategory, setTransactions } = useTransactionStore();
+  const { transactions, categories, addTransaction, deleteTransaction, addCategory, deleteCategory } = useTransactionStore();
   const fileRef = useRef<HTMLInputElement>(null);
+  const backupRef = useRef<HTMLInputElement>(null);
   const [tab, setTab] = useState<'form' | 'list' | 'categories'>('form');
   const [importing, setImporting] = useState(false);
   const [importMsg, setImportMsg] = useState('');
@@ -55,13 +58,38 @@ export default function InputPage() {
         setImportMsg('Không tìm thấy giao dịch hợp lệ trong file.');
       } else {
         txs.forEach(t => addTransaction(t));
-        setImportMsg(`✅ Đã nhập ${txs.length} giao dịch từ file.`);
+        setImportMsg(`Đã nhập thành công ${txs.length} giao dịch và lưu vào db.json.`);
       }
     } catch (err) {
-      setImportMsg('❌ Lỗi khi đọc file: ' + String(err));
+      setImportMsg('Lỗi khi đọc file: ' + String(err));
     } finally {
       setImporting(false);
       if (fileRef.current) fileRef.current.value = '';
+    }
+  };
+
+  const handleBackupRestore = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImporting(true);
+    try {
+      const res = await importBackupJSON(file);
+      setImportMsg(res.message);
+    } finally {
+      setImporting(false);
+      if (backupRef.current) backupRef.current.value = '';
+    }
+  };
+
+  const handleResetDatabase = async () => {
+    if (confirm('XÁC NHẬN: Xóa sạch toàn bộ dữ liệu trong file db.json và khôi phục về trạng thái trống?')) {
+      setImporting(true);
+      try {
+        await resetFileDatabase();
+        setImportMsg('Đã xóa sạch dữ liệu trong file db.json.');
+      } finally {
+        setImporting(false);
+      }
     }
   };
 
@@ -75,9 +103,9 @@ export default function InputPage() {
       const file = new File([blob], 'sample.csv', { type: 'text/csv' });
       const txs = await importCSV(file);
       txs.forEach(t => addTransaction(t));
-      setImportMsg(`✅ Đã tải ${txs.length} giao dịch mẫu.`);
+      setImportMsg(`Đã tải thành công ${txs.length} giao dịch mẫu vào db.json.`);
     } catch {
-      setImportMsg('ℹ️ Hãy tải file CSV mẫu từ docs/DATA_SCHEMA.md');
+      setImportMsg('Hướng dẫn: Có thể tải file CSV mẫu từ thư mục docs/DATA_SCHEMA.md');
     } finally {
       setImporting(false);
     }
@@ -87,67 +115,73 @@ export default function InputPage() {
     <div style={{ flex: 1, overflow: 'auto', padding: 24 }}>
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
         <div style={{ marginBottom: 24 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>
-            <span className="gradient-text">Nhập liệu</span>
+          <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4, color: '#f8fafc' }}>
+            Nhập liệu & Quản lý File Database (db.json)
           </h1>
           <p style={{ color: '#64748b', fontSize: 13 }}>
-            Nhập giao dịch thủ công, import CSV/Excel, hoặc tải dataset mẫu
+            Dữ liệu tự động lưu liên tục vào file <code>src/data/db.json</code> — không lo mất dữ liệu khi tắt project
           </p>
         </div>
 
+        {/* File import & backup action card */}
         <div
           className="glass-card"
-          style={{ padding: 20, marginBottom: 24, display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}
+          style={{ padding: 20, marginBottom: 24, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}
         >
-          <span style={{ fontSize: 20 }}>📁</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Import từ file CSV/Excel</div>
-            <div style={{ fontSize: 12, color: '#64748b' }}>Hỗ trợ sao kê VCB, Techcombank, MBBank, BIDV</div>
+          <IconFileText size={22} color="#818cf8" />
+          <div style={{ flex: 1, minWidth: 200 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>Cơ chế Lưu trữ File (db.json)</div>
+            <div style={{ fontSize: 12, color: '#64748b' }}>Lưu trực tiếp vào ổ đĩa dự án + Hỗ trợ Import / Export JSON</div>
           </div>
-          <input
-            ref={fileRef}
-            type="file"
-            accept=".csv,.xlsx,.xls"
-            style={{ display: 'none' }}
-            onChange={handleFileImport}
-          />
+          <input ref={fileRef} type="file" accept=".csv,.xlsx,.xls" style={{ display: 'none' }} onChange={handleFileImport} />
+          <input ref={backupRef} type="file" accept=".json" style={{ display: 'none' }} onChange={handleBackupRestore} />
+
           <button className="btn-secondary" onClick={() => fileRef.current?.click()} disabled={importing}>
-            {importing ? '⏳ Đang nhập...' : '📂 Chọn file'}
+            Import Sao kê CSV
+          </button>
+          <button className="btn-secondary" onClick={() => backupRef.current?.click()} disabled={importing}>
+            Khôi phục File JSON
+          </button>
+          <button className="btn-secondary" onClick={exportBackupJSON} disabled={transactions.length === 0} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <IconDownload size={14} /> Tải File Backup
           </button>
           <button className="btn-secondary" onClick={handleLoadSample} disabled={importing}>
-            🎲 Dữ liệu mẫu
+            Nạp Dữ liệu Mẫu
           </button>
-          {transactions.length > 0 && (
-            <button
-              className="btn-danger"
-              onClick={() => { if (confirm('Xóa toàn bộ dữ liệu?')) setTransactions([]); }}
-            >
-              🗑️ Xóa tất cả
-            </button>
-          )}
+          <button
+            className="btn-danger"
+            onClick={handleResetDatabase}
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            <IconRefresh size={14} /> Reset Database
+          </button>
         </div>
+
         {importMsg && (
           <div className="glass-card" style={{
-            padding: 10,
+            padding: 12,
             marginBottom: 16,
             fontSize: 13,
-            color: importMsg.startsWith('✅') ? '#10b981' : importMsg.startsWith('ℹ️') ? '#6366f1' : '#ef4444',
+            color: '#a5b4fc',
+            borderLeft: '4px solid #6366f1',
           }}>
             {importMsg}
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: 4, marginBottom: 20 }}>
+        <div style={{ display: 'flex', gap: 6, marginBottom: 20 }}>
           {[
-            { id: 'form', label: '✏️ Nhập tay' },
-            { id: 'list', label: `📋 Danh sách (${transactions.length})` },
-            { id: 'categories', label: `🏷️ Danh mục (${categories.length})` },
+            { id: 'form', label: 'Nhập thủ công', icon: <IconInput size={15} /> },
+            { id: 'list', label: `Danh sách giao dịch (${transactions.length})`, icon: <IconFileText size={15} /> },
+            { id: 'categories', label: `Danh mục (${categories.length})`, icon: <IconCheck size={15} /> },
           ].map(t => (
             <button
               key={t.id}
               className={`tab-button ${tab === t.id ? 'active' : ''}`}
               onClick={() => setTab(t.id as typeof tab)}
+              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
             >
+              {t.icon}
               {t.label}
             </button>
           ))}
@@ -163,7 +197,7 @@ export default function InputPage() {
                   </label>
                   <input
                     className="input-field"
-                    placeholder="35000 hoặc 35k"
+                    placeholder="VD: 35000 hoặc 35k"
                     value={form.amount}
                     onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
                     required
@@ -171,7 +205,7 @@ export default function InputPage() {
                 </div>
                 <div>
                   <label style={{ fontSize: 12, color: '#94a3b8', display: 'block', marginBottom: 6 }}>
-                    Ngày giờ
+                    Thời gian giao dịch
                   </label>
                   <input
                     className="input-field"
@@ -183,11 +217,11 @@ export default function InputPage() {
               </div>
               <div>
                 <label style={{ fontSize: 12, color: '#94a3b8', display: 'block', marginBottom: 6 }}>
-                  Nội dung / Ghi chú
+                  Nội dung chuyển khoản / Ghi chú
                 </label>
                 <input
                   className="input-field"
-                  placeholder="Tiem tra sua Te Amo..."
+                  placeholder="VD: Mua trà sữa Te Amo..."
                   value={form.note}
                   onChange={e => setForm(f => ({ ...f, note: e.target.value }))}
                 />
@@ -195,7 +229,7 @@ export default function InputPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 <div>
                   <label style={{ fontSize: 12, color: '#94a3b8', display: 'block', marginBottom: 6 }}>
-                    Danh mục
+                    Danh mục chi tiêu
                   </label>
                   <select
                     className="input-field"
@@ -205,28 +239,28 @@ export default function InputPage() {
                     <option value="">-- Chọn danh mục --</option>
                     {categories.map(c => (
                       <option key={c.id} value={c.id}>
-                        {c.icon} {c.label}
+                        {c.label}
                       </option>
                     ))}
                   </select>
                 </div>
                 <div>
                   <label style={{ fontSize: 12, color: '#94a3b8', display: 'block', marginBottom: 6 }}>
-                    Phân loại (để AI tự đoán nếu bỏ trống)
+                    Phân loại (bỏ trống để AI tự động dự đoán)
                   </label>
                   <select
                     className="input-field"
                     value={form.label}
                     onChange={e => setForm(f => ({ ...f, label: e.target.value as typeof form.label }))}
                   >
-                    <option value="">🤖 AI tự đoán</option>
-                    <option value="essential">✅ Thiết yếu</option>
-                    <option value="latte">☕ Linh tinh (Latte)</option>
+                    <option value="">Phân loại tự động (AI)</option>
+                    <option value="essential">Thiết yếu</option>
+                    <option value="latte">Chi tiêu linh tinh (Latte Factor)</option>
                   </select>
                 </div>
               </div>
-              <button type="submit" className="btn-primary" style={{ alignSelf: 'flex-start' }}>
-                ➕ Thêm giao dịch
+              <button type="submit" className="btn-primary" style={{ alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <IconPlus size={16} /> Thêm giao dịch
               </button>
             </form>
           </div>
@@ -236,14 +270,14 @@ export default function InputPage() {
           <div className="glass-card" style={{ padding: 20 }}>
             {transactions.length === 0 ? (
               <div style={{ color: '#64748b', textAlign: 'center', padding: 40 }}>
-                Chưa có giao dịch. Hãy nhập tay hoặc import file.
+                Chưa có dữ liệu. Vui lòng nhập thủ công, nạp dữ liệu mẫu hoặc khôi phục từ file JSON.
               </div>
             ) : (
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                   <thead>
                     <tr>
-                      {['Ngày giờ', 'Số tiền', 'Nội dung', 'Danh mục', 'Phân loại', ''].map(h => (
+                      {['Thời gian', 'Số tiền', 'Nội dung', 'Danh mục', 'Phân loại', ''].map(h => (
                         <th key={h} style={{
                           padding: '8px 12px',
                           textAlign: 'left',
@@ -282,9 +316,10 @@ export default function InputPage() {
                         <td style={{ padding: '8px 12px' }}>
                           <button
                             onClick={() => deleteTransaction(t.id)}
-                            style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 14 }}
+                            style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
+                            title="Xóa"
                           >
-                            🗑️
+                            <IconTrash size={15} />
                           </button>
                         </td>
                       </tr>
@@ -293,7 +328,7 @@ export default function InputPage() {
                 </table>
                 {transactions.length > 100 && (
                   <div style={{ fontSize: 12, color: '#64748b', padding: '10px 12px' }}>
-                    Hiển thị 100/{transactions.length} giao dịch
+                    Hiển thị 100/{transactions.length} giao dịch gần nhất
                   </div>
                 )}
               </div>
@@ -318,7 +353,7 @@ function CategoryManager({
   addCategory: (c: Category) => void;
   deleteCategory: (id: string) => void;
 }) {
-  const [form, setForm] = useState({ label: '', icon: '📦', defaultLabel: 'latte' as 'latte' | 'essential', color: '#6366f1' });
+  const [form, setForm] = useState({ label: '', defaultLabel: 'latte' as 'latte' | 'essential', color: '#6366f1' });
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -326,34 +361,32 @@ function CategoryManager({
     addCategory({
       id: form.label.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now(),
       label: form.label,
-      icon: form.icon,
+      icon: '',
       defaultLabel: form.defaultLabel,
       color: form.color,
     });
-    setForm({ label: '', icon: '📦', defaultLabel: 'latte', color: '#6366f1' });
+    setForm({ label: '', defaultLabel: 'latte', color: '#6366f1' });
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div className="glass-card" style={{ padding: 20 }}>
-        <div style={{ fontSize: 14, fontWeight: 600, color: '#94a3b8', marginBottom: 14 }}>➕ Thêm danh mục mới</div>
+        <div style={{ fontSize: 13, fontWeight: 600, color: '#94a3b8', marginBottom: 14 }}>Thêm danh mục mới</div>
         <form onSubmit={handleAdd} style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-          <div>
-            <label style={{ fontSize: 11, color: '#64748b', display: 'block', marginBottom: 4 }}>Icon</label>
-            <input className="input-field" value={form.icon} onChange={e => setForm(f => ({ ...f, icon: e.target.value }))} style={{ width: 60 }} />
-          </div>
-          <div style={{ flex: 1, minWidth: 140 }}>
+          <div style={{ flex: 1, minWidth: 160 }}>
             <label style={{ fontSize: 11, color: '#64748b', display: 'block', marginBottom: 4 }}>Tên danh mục</label>
-            <input className="input-field" placeholder="Trà sữa" value={form.label} onChange={e => setForm(f => ({ ...f, label: e.target.value }))} required />
+            <input className="input-field" placeholder="VD: Trà sữa, Ăn vặt..." value={form.label} onChange={e => setForm(f => ({ ...f, label: e.target.value }))} required />
           </div>
           <div>
-            <label style={{ fontSize: 11, color: '#64748b', display: 'block', marginBottom: 4 }}>Mặc định</label>
+            <label style={{ fontSize: 11, color: '#64748b', display: 'block', marginBottom: 4 }}>Nhãn mặc định</label>
             <select className="input-field" value={form.defaultLabel} onChange={e => setForm(f => ({ ...f, defaultLabel: e.target.value as 'latte' | 'essential' }))}>
-              <option value="latte">Linh tinh</option>
+              <option value="latte">Chi tiêu linh tinh</option>
               <option value="essential">Thiết yếu</option>
             </select>
           </div>
-          <button type="submit" className="btn-primary">Thêm</button>
+          <button type="submit" className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <IconPlus size={16} /> Thêm
+          </button>
         </form>
       </div>
 
@@ -364,10 +397,9 @@ function CategoryManager({
             className="glass-card"
             style={{ padding: 14, display: 'flex', alignItems: 'center', gap: 10, borderLeft: `3px solid ${c.color}` }}
           >
-            <span style={{ fontSize: 22 }}>{c.icon}</span>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>{c.label}</div>
-              <div style={{ fontSize: 11 }}>
+              <div style={{ fontSize: 11, marginTop: 2 }}>
                 {c.defaultLabel === 'latte'
                   ? <span className="badge-latte">Linh tinh</span>
                   : <span className="badge-essential">Thiết yếu</span>}
@@ -375,10 +407,10 @@ function CategoryManager({
             </div>
             <button
               onClick={() => deleteCategory(c.id)}
-              style={{ background: 'none', border: 'none', color: '#475569', cursor: 'pointer', fontSize: 14 }}
+              style={{ background: 'none', border: 'none', color: '#475569', cursor: 'pointer' }}
               title="Xóa danh mục"
             >
-              ×
+              <IconTrash size={15} />
             </button>
           </div>
         ))}

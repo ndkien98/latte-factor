@@ -12,15 +12,26 @@ import BudgetTab from '../components/dashboard/BudgetTab';
 import AlertsTab from '../components/dashboard/AlertsTab';
 import ChatHistoryTab from '../components/dashboard/ChatHistoryTab';
 import { exportToExcel } from '../services/exportExcel';
+import {
+  IconDashboard,
+  IconPieChart,
+  IconTrendingUp,
+  IconSavings,
+  IconTarget,
+  IconAlertTriangle,
+  IconChat,
+  IconDownload,
+  IconFileText,
+} from '../components/common/Icons';
 
 const TABS = [
-  { id: 'overview', label: '🏠 Tổng quan' },
-  { id: 'cluster', label: '🔮 Phân cụm' },
-  { id: 'trend', label: '📈 Xu hướng' },
-  { id: 'future', label: '💰 Tích lũy' },
-  { id: 'budget', label: '🎯 Ngân sách' },
-  { id: 'alerts', label: '🚨 Cảnh báo' },
-  { id: 'chat-history', label: '💬 Chat log' },
+  { id: 'overview', label: 'Tổng quan', icon: <IconDashboard size={15} /> },
+  { id: 'cluster', label: 'Phân cụm', icon: <IconPieChart size={15} /> },
+  { id: 'trend', label: 'Xu hướng', icon: <IconTrendingUp size={15} /> },
+  { id: 'future', label: 'Tích lũy', icon: <IconSavings size={15} /> },
+  { id: 'budget', label: 'Ngân sách', icon: <IconTarget size={15} /> },
+  { id: 'alerts', label: 'Cảnh báo', icon: <IconAlertTriangle size={15} /> },
+  { id: 'chat-history', label: 'Lịch sử Chat', icon: <IconChat size={15} /> },
 ];
 
 export default function DashboardPage() {
@@ -55,32 +66,38 @@ export default function DashboardPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '16px 24px',
-        borderBottom: '1px solid rgba(255,255,255,0.07)',
+        padding: '14px 24px',
+        borderBottom: '1px solid rgba(255,255,255,0.08)',
         background: 'rgba(22,33,62,0.5)',
         backdropFilter: 'blur(10px)',
         gap: 16,
         flexWrap: 'wrap',
       }}>
-        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-          {TABS.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {TABS.map(tab => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`tab-button ${isActive ? 'active' : ''}`}
+                style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+              >
+                <span style={{ color: isActive ? '#a5b4fc' : '#64748b' }}>{tab.icon}</span>
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
 
         <button
           onClick={handleExport}
           disabled={exporting || transactions.length === 0}
           className="btn-primary"
-          style={{ display: 'flex', alignItems: 'center', gap: 6, opacity: transactions.length === 0 ? 0.5 : 1 }}
+          style={{ display: 'flex', alignItems: 'center', gap: 8, opacity: transactions.length === 0 ? 0.5 : 1 }}
         >
-          {exporting ? '⏳ Đang xuất...' : '📥 Xuất Excel'}
+          <IconDownload size={16} />
+          {exporting ? 'Đang xuất...' : 'Xuất Excel'}
         </button>
       </div>
 
@@ -95,11 +112,11 @@ export default function DashboardPage() {
             gap: 16,
             color: '#64748b',
           }}>
-            <div style={{ fontSize: 64 }}>📊</div>
-            <div style={{ fontSize: 20, fontWeight: 600, color: '#94a3b8' }}>Chưa có dữ liệu</div>
-            <div style={{ fontSize: 14, textAlign: 'center', maxWidth: 400 }}>
-              Hãy nhập dữ liệu giao dịch ở tab <strong style={{ color: '#a5b4fc' }}>Nhập liệu</strong>, 
-              hoặc nói chuyện với <strong style={{ color: '#a5b4fc' }}>Chatbot AI</strong> để bắt đầu.
+            <IconFileText size={48} color="#475569" />
+            <div style={{ fontSize: 18, fontWeight: 600, color: '#94a3b8' }}>Chưa có dữ liệu giao dịch</div>
+            <div style={{ fontSize: 13, textAlign: 'center', maxWidth: 420, lineHeight: 1.6 }}>
+              Vui lòng chuyển sang tab <strong style={{ color: '#a5b4fc' }}>Nhập liệu</strong> để thêm dữ liệu hoặc tải dataset mẫu, 
+              hoặc sử dụng <strong style={{ color: '#a5b4fc' }}>Trợ lý AI</strong>.
             </div>
           </div>
         ) : (

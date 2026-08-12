@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { AssociationRule } from '../../types';
 import { requestNotificationPermission, checkAndSendAprioriAlert } from '../../services/notification';
+import { IconBell, IconAlertTriangle } from '../common/Icons';
 
 interface Props {
   rules: AssociationRule[];
@@ -28,11 +29,11 @@ export default function AlertsTab({ rules }: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div>
-        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>
-          <span className="gradient-text">Cảnh báo Hành vi (Apriori)</span>
+        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4, color: '#f8fafc' }}>
+          Cảnh báo Hành vi (Apriori)
         </h2>
         <p style={{ color: '#64748b', fontSize: 13 }}>
-          Tìm "ngòi nổ" hành vi chi tiêu — Support/Confidence/Lift của các luật kết hợp
+          Nhận diện quy luật thói quen chi tiêu thông qua chỉ số Support, Confidence và Lift
         </p>
       </div>
 
@@ -42,51 +43,53 @@ export default function AlertsTab({ rules }: Props) {
           padding: 16,
           display: 'flex',
           alignItems: 'center',
-          gap: 12,
+          gap: 14,
           borderLeft: `4px solid ${notifGranted ? '#10b981' : '#f59e0b'}`,
         }}
       >
-        <span style={{ fontSize: 20 }}>{notifGranted ? '🔔' : '🔕'}</span>
+        <div style={{ color: notifGranted ? '#10b981' : '#f59e0b' }}>
+          <IconBell size={22} />
+        </div>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>
-            Thông báo đẩy (Web Push)
+            Thông báo đẩy Trình duyệt (Web Push)
           </div>
           <div style={{ fontSize: 12, color: '#64748b' }}>
-            {notifGranted ? 'Đang bật — sẽ cảnh báo khi phát hiện hành vi nguy hiểm' : 'Chưa bật — bấm để cấp quyền'}
+            {notifGranted ? 'Đã bật — tự động cảnh báo khi phát hiện nguy cơ chi tiêu bốc đồng' : 'Chưa bật — nhấp để cấp quyền thông báo'}
           </div>
         </div>
         {notifGranted ? (
           <button className="btn-secondary" onClick={handleTestAlert}>
-            🧪 Test Alert
+            Kiểm tra Thông báo
           </button>
         ) : (
           <button className="btn-primary" onClick={handleEnableNotif}>
-            Bật thông báo
+            Cấp quyền Thông báo
           </button>
         )}
       </div>
 
       {alertSent && (
         <div className="glass-card" style={{ padding: 12, borderLeft: '4px solid #10b981', fontSize: 13, color: '#10b981' }}>
-          ✅ Đã gửi thông báo thử nghiệm!
+          Đã gửi thông báo thử nghiệm thành công!
         </div>
       )}
 
       {rules.length === 0 ? (
-        <div style={{ color: '#64748b', textAlign: 'center', padding: 40, fontSize: 14 }}>
-          <div style={{ fontSize: 32, marginBottom: 8 }}>🔍</div>
-          Chưa tìm được luật kết hợp nào. Hãy thêm nhiều dữ liệu hơn hoặc giảm ngưỡng minSupport.
+        <div style={{ color: '#64748b', textAlign: 'center', padding: 40, fontSize: 13 }}>
+          <IconAlertTriangle size={36} color="#475569" style={{ marginBottom: 10 }} />
+          <div>Chưa tìm thấy luật kết hợp phù hợp. Cần thêm dữ liệu giao dịch hoặc hạ thấp ngưỡng Support.</div>
         </div>
       ) : (
         <div className="glass-card" style={{ padding: 20 }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: '#94a3b8', marginBottom: 14 }}>
-            {rules.length} luật kết hợp tìm được
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#94a3b8', marginBottom: 14 }}>
+            Danh sách {rules.length} quy luật phát hiện
           </div>
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr>
-                  {['Nguyên nhân (A)', 'Kết quả (B)', 'Support', 'Confidence', 'Lift'].map(h => (
+                  {['Tiền đề (A)', 'Kết quả (B)', 'Support', 'Confidence', 'Lift'].map(h => (
                     <th key={h} style={{
                       padding: '8px 12px',
                       textAlign: 'left',
@@ -122,7 +125,7 @@ export default function AlertsTab({ rules }: Props) {
                         color: r.confidence >= 0.8 ? '#f59e0b' : '#94a3b8',
                         fontWeight: r.confidence >= 0.8 ? 700 : 400,
                       }}>
-                        {(r.confidence * 100).toFixed(1)}% {r.confidence >= 0.8 && '⚠️'}
+                        {(r.confidence * 100).toFixed(1)}%
                       </span>
                     </td>
                     <td style={{ padding: '8px 12px', color: r.lift > 1.2 ? '#10b981' : '#94a3b8' }}>

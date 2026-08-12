@@ -2,6 +2,7 @@
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { RegressionResult } from '../../types';
+import { IconTrendingUp } from '../common/Icons';
 
 const formatVND = (n: number) => `${(n / 1000).toFixed(0)}k`;
 
@@ -13,7 +14,7 @@ export default function TrendTab({ regression }: Props) {
   if (!regression) {
     return (
       <div style={{ color: '#64748b', textAlign: 'center', padding: 60 }}>
-        <div style={{ fontSize: 48, marginBottom: 12 }}>📈</div>
+        <IconTrendingUp size={40} color="#475569" style={{ marginBottom: 12 }} />
         <div>Cần ít nhất 2 ngày dữ liệu để vẽ xu hướng.</div>
       </div>
     );
@@ -40,8 +41,8 @@ export default function TrendTab({ regression }: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div>
-        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>
-          <span className="gradient-text">Xu hướng Chi tiêu (Linear Regression)</span>
+        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4, color: '#f8fafc' }}>
+          Xu hướng Chi tiêu (Linear Regression)
         </h2>
         <p style={{ color: '#64748b', fontSize: 13 }}>
           ŷ = {regression.w0.toFixed(0)} + {regression.w1.toFixed(2)}×ngày &nbsp;|&nbsp; R² = {(regression.r2 * 100).toFixed(1)}%
@@ -90,7 +91,7 @@ export default function TrendTab({ regression }: Props) {
               ]}
             />
             <Legend
-              formatter={v => v === 'actual' ? '📍 Thực tế' : '📊 Dự báo'}
+              formatter={v => v === 'actual' ? 'Thực tế' : 'Dự báo'}
               wrapperStyle={{ fontSize: 12, color: '#94a3b8' }}
             />
             <Line
@@ -123,11 +124,11 @@ export default function TrendTab({ regression }: Props) {
           background: `rgba(${regression.w1 > 0 ? '239,68,68' : '16,185,129'},0.05)`,
         }}
       >
-        <span style={{ fontSize: 14, color: '#94a3b8' }}>
-          💡 <strong style={{ color: '#e2e8f0' }}>Nhận xét:</strong>{' '}
+        <span style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.6 }}>
+          <strong style={{ color: '#e2e8f0' }}>Nhận xét mô hình:</strong>{' '}
           {regression.w1 > 0
-            ? `Chi tiêu linh tinh đang tăng ${regression.w1.toFixed(0)}đ/ngày. Nếu tiếp tục, sau 30 ngày bạn sẽ tốn thêm ${formatVND(regression.w1 * 30)} so với hiện tại!`
-            : `Tốt lắm! Chi tiêu linh tinh đang giảm ${Math.abs(regression.w1).toFixed(0)}đ/ngày. Tiếp tục duy trì!`}
+            ? `Chi tiêu linh tinh đang tăng ${regression.w1.toFixed(0)}đ/ngày. Nếu tiếp tục thói quen này, sau 30 ngày chi phí sẽ tăng thêm ${formatVND(regression.w1 * 30)}.`
+            : `Tốc độ chi tiêu linh tinh đang giảm ${Math.abs(regression.w1).toFixed(0)}đ/ngày. Hãy tiếp tục duy trì kiểm soát tốt.`}
         </span>
       </div>
     </div>

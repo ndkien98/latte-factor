@@ -1,0 +1,227 @@
+{
+  "transactions": [
+    {
+      "id": "fd919ac2-a7fe-4ddb-bd55-43530c74923b",
+      "amount": 7000000,
+      "timestamp": "2026-08-12T15:44:08.637Z",
+      "note": "học thêm 7 triệu",
+      "source": "chatbot",
+      "label": "essential",
+      "confidence": 0.5630182766884722
+    },
+    {
+      "id": "6c09aeae-3e55-45b6-a4eb-e2a04e350c31",
+      "amount": 80000,
+      "timestamp": "2026-08-12T15:43:53.175Z",
+      "note": "mua trà sữa 80k",
+      "source": "chatbot",
+      "label": "latte",
+      "confidence": 0.853604476890619
+    },
+    {
+      "id": "b9086273-33d3-4bf3-b66b-8dd4b7166ded",
+      "amount": 35000,
+      "timestamp": "2026-08-11T20:00:00.000Z",
+      "note": "hôm nay mua trà sữa 35k lúc 3h chiều",
+      "source": "chatbot",
+      "label": "latte",
+      "confidence": 0.6259599548511278
+    }
+  ],
+  "categories": [
+    {
+      "id": "tra-sua",
+      "label": "Trà sữa",
+      "icon": "",
+      "defaultLabel": "latte",
+      "color": "#6366f1"
+    },
+    {
+      "id": "an-vat",
+      "label": "Ăn vặt",
+      "icon": "",
+      "defaultLabel": "latte",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "an-uong",
+      "label": "Ăn uống",
+      "icon": "",
+      "defaultLabel": "essential",
+      "color": "#10b981"
+    },
+    {
+      "id": "xang-xe",
+      "label": "Xăng xe",
+      "icon": "",
+      "defaultLabel": "essential",
+      "color": "#3b82f6"
+    },
+    {
+      "id": "tien-nha",
+      "label": "Tiền nhà",
+      "icon": "",
+      "defaultLabel": "essential",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "dien-nuoc",
+      "label": "Điện nước",
+      "icon": "",
+      "defaultLabel": "essential",
+      "color": "#06b6d4"
+    },
+    {
+      "id": "mua-sam",
+      "label": "Mua sắm",
+      "icon": "",
+      "defaultLabel": "latte",
+      "color": "#ec4899"
+    },
+    {
+      "id": "giai-tri",
+      "label": "Giải trí",
+      "icon": "",
+      "defaultLabel": "latte",
+      "color": "#ef4444"
+    },
+    {
+      "id": "y-te",
+      "label": "Y tế",
+      "icon": "",
+      "defaultLabel": "essential",
+      "color": "#14b8a6"
+    },
+    {
+      "id": "khac",
+      "label": "Khác",
+      "icon": "",
+      "defaultLabel": "unknown",
+      "color": "#94a3b8"
+    }
+  ],
+  "params": {
+    "k": 3,
+    "kmeansWeightAmount": 1,
+    "kmeansWeightFrequency": 1,
+    "kmeansWeightHour": 0.5,
+    "nbConfidenceThreshold": 0.7,
+    "lrForecastDays": 30,
+    "fvRate": 0.005,
+    "fvMonths": 12,
+    "budget": 500000,
+    "minSupport": 0.1,
+    "minConfidence": 0.6
+  },
+  "chatMessages": [
+    {
+      "id": "ae7671a4-a272-40b7-9e6c-987eeaca992c",
+      "role": "bot",
+      "content": "Xin chào! Tôi là Trợ lý Tài chính AI — hỗ trợ bạn ghi nhận và phân loại giao dịch bằng thuật toán NLP Naive Bayes.\n\nNhập giao dịch mẫu: \"hôm nay mua trà sữa 35k lúc 3h chiều\"",
+      "timestamp": "2026-08-12T15:43:33.940Z"
+    },
+    {
+      "id": "7d6e410c-174a-4a6b-890a-2bcb6f7cd169",
+      "role": "bot",
+      "content": "Xin chào! Tôi là Trợ lý Tài chính AI — hỗ trợ bạn ghi nhận và phân loại giao dịch bằng thuật toán NLP Naive Bayes.\n\nNhập giao dịch mẫu: \"hôm nay mua trà sữa 35k lúc 3h chiều\"",
+      "timestamp": "2026-08-12T15:43:33.940Z"
+    },
+    {
+      "id": "ec7e9c1f-6449-42ad-9210-301257bcf1c0",
+      "role": "user",
+      "content": "hôm nay mua trà sữa 35k lúc 3h chiều",
+      "timestamp": "2026-08-12T15:43:37.045Z"
+    },
+    {
+      "id": "ddb01123-d3e7-4bf7-8617-358caf758801",
+      "role": "bot",
+      "content": "Đã ghi nhận giao dịch: 35.000 ₫ — 03:00 12-08\n\nPhân loại dự đoán: Chi tiêu linh tinh (Latte Factor) (Độ tin cậy: 63%)\n\nBạn có thể điều chỉnh nhãn bên dưới để giúp mô hình AI nâng cao độ chính xác.",
+      "timestamp": "2026-08-12T15:43:37.047Z",
+      "intent": "add_transaction",
+      "relatedTransaction": {
+        "id": "b9086273-33d3-4bf3-b66b-8dd4b7166ded",
+        "amount": 35000,
+        "timestamp": "2026-08-11T20:00:00.000Z",
+        "note": "hôm nay mua trà sữa 35k lúc 3h chiều",
+        "source": "chatbot",
+        "label": "latte",
+        "confidence": 0.6259599548511278
+      }
+    },
+    {
+      "id": "e8a4ce4a-ff35-4f9f-8074-fc9b118790d0",
+      "role": "bot",
+      "content": "Đã lưu giao dịch 35.000 ₫ vào hệ thống!",
+      "timestamp": "2026-08-12T15:43:38.285Z"
+    },
+    {
+      "id": "5acac963-d64e-4762-8304-af2a3adbd2aa",
+      "role": "user",
+      "content": "mua trà sữa 80k",
+      "timestamp": "2026-08-12T15:43:53.174Z"
+    },
+    {
+      "id": "f502df95-4c61-4fb4-85ed-39e6b3b493bf",
+      "role": "bot",
+      "content": "Đã ghi nhận giao dịch: 80.000 ₫ — 22:43 12-08\n\nPhân loại dự đoán: Chi tiêu linh tinh (Latte Factor) (Độ tin cậy: 85%)\n\nBạn có thể điều chỉnh nhãn bên dưới để giúp mô hình AI nâng cao độ chính xác.",
+      "timestamp": "2026-08-12T15:43:53.175Z",
+      "intent": "add_transaction",
+      "relatedTransaction": {
+        "id": "6c09aeae-3e55-45b6-a4eb-e2a04e350c31",
+        "amount": 80000,
+        "timestamp": "2026-08-12T15:43:53.175Z",
+        "note": "mua trà sữa 80k",
+        "source": "chatbot",
+        "label": "latte",
+        "confidence": 0.853604476890619
+      }
+    },
+    {
+      "id": "d768cefc-31c5-4c29-944c-6653eb494040",
+      "role": "bot",
+      "content": "Đã lưu giao dịch 80.000 ₫ vào hệ thống!",
+      "timestamp": "2026-08-12T15:43:55.285Z"
+    },
+    {
+      "id": "3925f917-b15c-4b9e-b7da-4e5db7171100",
+      "role": "user",
+      "content": "học thêm 7tr",
+      "timestamp": "2026-08-12T15:44:02.007Z"
+    },
+    {
+      "id": "8cbc9cd2-6ba6-4748-88e0-3de2f36c35e6",
+      "role": "bot",
+      "content": "Hệ thống chưa nhận diện rõ yêu cầu. Bạn có thể gõ \"help\" để xem câu lệnh mẫu hoặc nhập giao dịch trực tiếp (VD: \"mua trà sữa 35k lúc 3h chiều\").",
+      "timestamp": "2026-08-12T15:44:02.008Z",
+      "intent": "unknown"
+    },
+    {
+      "id": "b6a74445-e36f-4903-8dba-e716c99e521f",
+      "role": "user",
+      "content": "học thêm 7 triệu",
+      "timestamp": "2026-08-12T15:44:08.637Z"
+    },
+    {
+      "id": "fb426c1f-9805-4ca6-a565-9afb300b94b4",
+      "role": "bot",
+      "content": "Đã ghi nhận giao dịch: 7.000.000 ₫ — 22:44 12-08\n\nPhân loại dự đoán: Chi tiêu thiết yếu (Độ tin cậy: 56%)\n\nBạn có thể điều chỉnh nhãn bên dưới để giúp mô hình AI nâng cao độ chính xác.",
+      "timestamp": "2026-08-12T15:44:08.638Z",
+      "intent": "add_transaction",
+      "relatedTransaction": {
+        "id": "fd919ac2-a7fe-4ddb-bd55-43530c74923b",
+        "amount": 7000000,
+        "timestamp": "2026-08-12T15:44:08.637Z",
+        "note": "học thêm 7 triệu",
+        "source": "chatbot",
+        "label": "essential",
+        "confidence": 0.5630182766884722
+      }
+    },
+    {
+      "id": "128e0e47-c0a5-44ca-9def-81510ec147ac",
+      "role": "bot",
+      "content": "Đã lưu giao dịch 7.000.000 ₫ vào hệ thống!",
+      "timestamp": "2026-08-12T15:44:13.861Z"
+    }
+  ]
+}

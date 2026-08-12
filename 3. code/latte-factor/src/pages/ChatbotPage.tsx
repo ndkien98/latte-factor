@@ -7,6 +7,7 @@ import { NaiveBayesClassifier } from '../algorithms/naiveBayes';
 import { detectIntent } from '../nlp/intentDetector';
 import type { ChatMessage, Transaction, TransactionLabel } from '../types';
 import { v4 as uuidv4 } from 'uuid';
+import { IconBot, IconUser, IconCheck } from '../components/common/Icons';
 
 function buildClassifier(transactions: Transaction[]): NaiveBayesClassifier {
   const clf = new NaiveBayesClassifier();
@@ -46,11 +47,11 @@ function generateBotResponse(
       source: 'chatbot',
     };
 
-    const labelText = tx.label === 'latte' ? '☕ Linh tinh' : '✅ Thiết yếu';
+    const labelText = tx.label === 'latte' ? 'Chi tiêu linh tinh (Latte Factor)' : 'Chi tiêu thiết yếu';
     const confText = `${(prediction.confidence * 100).toFixed(0)}%`;
 
     return {
-      text: `Đã ghi nhận: **${formatVND(tx.amount)}** — ${new Date(tx.timestamp).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })}\n\nPhân loại: ${labelText} (độ tin cậy: ${confText})\n\nBấm ✏️ nếu phân loại sai để AI học thêm.`,
+      text: `Đã ghi nhận giao dịch: ${formatVND(tx.amount)} — ${new Date(tx.timestamp).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })}\n\nPhân loại dự đoán: ${labelText} (Độ tin cậy: ${confText})\n\nBạn có thể điều chỉnh nhãn bên dưới để giúp mô hình AI nâng cao độ chính xác.`,
       transaction: tx,
     };
   }
@@ -60,36 +61,36 @@ function generateBotResponse(
     const total = transactions.reduce((s, t) => s + t.amount, 0);
     const latteCount = transactions.filter(t => t.label === 'latte').length;
     return {
-      text: `📊 **Báo cáo chi tiêu:**\n\n• Tổng: ${formatVND(total)}\n• Linh tinh: ${formatVND(latteTotal)} (${latteCount} lần)\n• Thiết yếu: ${formatVND(total - latteTotal)}\n• % Linh tinh: ${total > 0 ? ((latteTotal / total) * 100).toFixed(1) : 0}%`,
+      text: `Báo cáo chi tiêu tổng hợp:\n\n• Tổng chi tiêu: ${formatVND(total)}\n• Chi tiêu linh tinh: ${formatVND(latteTotal)} (${latteCount} giao dịch)\n• Chi tiêu thiết yếu: ${formatVND(total - latteTotal)}\n• Tỷ lệ linh tinh: ${total > 0 ? ((latteTotal / total) * 100).toFixed(1) : 0}%`,
     };
   }
 
   if (intent.intent === 'set_budget') {
     return {
-      text: `💰 Đã hiểu! Bạn muốn đặt ngân sách ${intent.extractedData?.amount ? formatVND(intent.extractedData.amount) : 'mới'}. Hãy vào tab **Cấu hình** để thiết lập ngân sách Knapsack.`,
+      text: `Đã ghi nhận ý định thiết lập ngân sách ${intent.extractedData?.amount ? formatVND(intent.extractedData.amount) : ''}. Bạn có thể vào phần Cấu hình để điều chỉnh bài toán 0/1 Knapsack.`,
     };
   }
 
   if (intent.intent === 'query_trend') {
     return {
-      text: `📈 Để xem xu hướng chi tiêu và dự báo, hãy vào **Dashboard → tab Xu hướng**. Thuật toán Linear Regression sẽ phân tích và dự đoán chi tiêu trong 30 ngày tới.`,
+      text: `Để xem chi tiết mô hình hồi quy tuyến tính (Linear Regression) và đường dự báo 30 ngày, vui lòng chọn tab Xu hướng trên Dashboard.`,
     };
   }
 
   if (intent.intent === 'query_savings') {
     return {
-      text: `💎 Để xem số tiền bạn có thể tiết kiệm được, vào **Dashboard → tab Tích lũy tương lai**. Công thức FV Annuity sẽ tính toán dựa trên chi tiêu linh tinh hiện tại của bạn.`,
+      text: `Để xem giá trị tích lũy dòng tiền (Future Value of Annuity) khi cắt giảm chi tiêu linh tinh, vui lòng chọn tab Tích lũy trên Dashboard.`,
     };
   }
 
   if (intent.intent === 'help') {
     return {
-      text: `🤖 **Hướng dẫn sử dụng Chatbot:**\n\n• **Thêm giao dịch:** "hôm nay mua trà sữa 35k lúc 3h chiều"\n• **Xem báo cáo:** "tháng này tôi tốn bao nhiêu tiền linh tinh?"\n• **Cảnh báo:** "xu hướng chi tiêu của tôi thế nào?"\n• **Tiết kiệm:** "nếu tôi bỏ uống trà sữa thì tiết kiệm được bao nhiêu?"\n\nChatbot dùng Naive Bayes + rule-based NLP (không phải LLM thật) nên chỉ hiểu các câu theo mẫu trên.`,
+      text: `Hướng dẫn tương tác với Trợ lý AI:\n\n• Thêm giao dịch: "hôm nay mua trà sữa 35k lúc 3h chiều"\n• Tra cứu báo cáo: "thống kê chi tiêu tháng này"\n• Hỏi xu hướng: "xu hướng chi tiêu của tôi thế nào"\n• Dự báo tích lũy: "nếu tiết kiệm trà sữa thì được bao nhiêu"\n\nHệ thống kết hợp thuật toán Naive Bayes NLP và bộ quy tắc nhận diện ý định.`,
     };
   }
 
   return {
-    text: `🤔 Xin lỗi, tôi chưa hiểu câu hỏi này. Gõ "help" để xem hướng dẫn, hoặc thử nhập giao dịch như: "mua trà sữa 35k lúc 3h chiều".`,
+    text: `Hệ thống chưa nhận diện rõ yêu cầu. Bạn có thể gõ "help" để xem câu lệnh mẫu hoặc nhập giao dịch trực tiếp (VD: "mua trà sữa 35k lúc 3h chiều").`,
   };
 }
 
@@ -111,7 +112,7 @@ export default function ChatbotPage() {
       addMessage({
         id: uuidv4(),
         role: 'bot',
-        content: '👋 Xin chào! Tôi là **Lỗ Thủng Ví Bot** — trợ lý AI giúp bạn phát hiện thói quen chi tiêu lãng phí.\n\nGõ "help" để xem hướng dẫn, hoặc thử nhập: "hôm nay mua trà sữa 35k"',
+        content: 'Xin chào! Tôi là Trợ lý Tài chính AI — hỗ trợ bạn ghi nhận và phân loại giao dịch bằng thuật toán NLP Naive Bayes.\n\nNhập giao dịch mẫu: "hôm nay mua trà sữa 35k lúc 3h chiều"',
         timestamp: new Date(),
       });
     }
@@ -154,7 +155,7 @@ export default function ChatbotPage() {
     addMessage({
       id: uuidv4(),
       role: 'bot',
-      content: `✅ Đã lưu giao dịch ${formatVND(tx.amount)} vào danh sách!`,
+      content: `Đã lưu giao dịch ${formatVND(tx.amount)} vào hệ thống!`,
       timestamp: new Date(),
     });
   };
@@ -171,7 +172,7 @@ export default function ChatbotPage() {
     addMessage({
       id: uuidv4(),
       role: 'bot',
-      content: `🧠 Cảm ơn! AI đã học được: "${tx.note}" → ${label === 'latte' ? '☕ Linh tinh' : '✅ Thiết yếu'}. Lần sau tôi sẽ phân loại chính xác hơn.`,
+      content: `Đã cập nhật phản hồi: "${tx.note}" → ${label === 'latte' ? 'Chi tiêu linh tinh' : 'Thiết yếu'}. Mô hình Naive Bayes đã học thành công từ ví dụ này.`,
       timestamp: new Date(),
     });
   };
@@ -179,17 +180,28 @@ export default function ChatbotPage() {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div style={{
-        padding: '16px 24px',
-        borderBottom: '1px solid rgba(255,255,255,0.07)',
+        padding: '14px 24px',
+        borderBottom: '1px solid rgba(255,255,255,0.08)',
         background: 'rgba(22,33,62,0.5)',
         display: 'flex',
         alignItems: 'center',
         gap: 12,
       }}>
-        <span style={{ fontSize: 24 }}>🤖</span>
+        <div style={{
+          width: 32,
+          height: 32,
+          borderRadius: 8,
+          background: 'rgba(99,102,241,0.2)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#818cf8',
+        }}>
+          <IconBot size={18} />
+        </div>
         <div>
-          <div style={{ fontWeight: 700, fontSize: 15 }}>Lỗ Thủng Ví Bot</div>
-          <div style={{ fontSize: 11, color: '#64748b' }}>Naive Bayes NLP + Rule-based Intent · {transactions.length} giao dịch trong bộ nhớ</div>
+          <div style={{ fontWeight: 700, fontSize: 14, color: '#f8fafc' }}>Trợ lý Phân loại AI</div>
+          <div style={{ fontSize: 11, color: '#64748b' }}>Mô hình Naive Bayes NLP · Online Learning Enabled</div>
         </div>
       </div>
 
@@ -206,8 +218,8 @@ export default function ChatbotPage() {
             }}
           >
             <div style={{
-              width: 36,
-              height: 36,
+              width: 34,
+              height: 34,
               borderRadius: '50%',
               background: msg.role === 'user'
                 ? 'linear-gradient(135deg, #6366f1, #8b5cf6)'
@@ -215,20 +227,20 @@ export default function ChatbotPage() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 16,
+              color: '#ffffff',
               flexShrink: 0,
             }}>
-              {msg.role === 'user' ? '👤' : '🤖'}
+              {msg.role === 'user' ? <IconUser size={16} /> : <IconBot size={16} />}
             </div>
             <div style={{ maxWidth: '75%', display: 'flex', flexDirection: 'column', gap: 8 }}>
               <div style={{
                 padding: '12px 16px',
-                borderRadius: msg.role === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+                borderRadius: msg.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
                 background: msg.role === 'user'
-                  ? 'linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2))'
+                  ? 'rgba(99,102,241,0.25)'
                   : 'rgba(255,255,255,0.05)',
                 border: msg.role === 'user'
-                  ? '1px solid rgba(99,102,241,0.3)'
+                  ? '1px solid rgba(99,102,241,0.35)'
                   : '1px solid rgba(255,255,255,0.07)',
                 fontSize: 13,
                 color: '#e2e8f0',
@@ -243,30 +255,30 @@ export default function ChatbotPage() {
                   <button
                     onClick={() => confirmTransaction(pendingTx.tx)}
                     className="btn-primary"
-                    style={{ fontSize: 12, padding: '6px 12px' }}
+                    style={{ fontSize: 12, padding: '6px 12px', display: 'flex', alignItems: 'center', gap: 6 }}
                   >
-                    ✅ Xác nhận & Lưu
+                    <IconCheck size={14} /> Xác nhận
                   </button>
                   <button
                     onClick={() => correctLabel(pendingTx.tx, 'essential')}
                     className="btn-secondary"
                     style={{ fontSize: 12, padding: '6px 12px' }}
                   >
-                    ✏️ Thiết yếu
+                    Gắn nhãn: Thiết yếu
                   </button>
                   <button
                     onClick={() => correctLabel(pendingTx.tx, 'latte')}
                     className="btn-secondary"
                     style={{ fontSize: 12, padding: '6px 12px' }}
                   >
-                    ✏️ Linh tinh
+                    Gắn nhãn: Linh tinh
                   </button>
                   <button
                     onClick={() => setPendingTx(null)}
                     className="btn-danger"
                     style={{ fontSize: 12, padding: '6px 12px' }}
                   >
-                    ❌ Hủy
+                    Hủy
                   </button>
                 </div>
               )}
@@ -289,8 +301,8 @@ export default function ChatbotPage() {
       }}>
         {[
           'hôm nay mua trà sữa 35k lúc 3h chiều',
-          'tháng này tốn bao nhiêu tiền linh tinh?',
-          'xu hướng chi tiêu của tôi?',
+          'thống kê chi tiêu tháng này',
+          'xu hướng chi tiêu của tôi',
           'help',
         ].map(s => (
           <button
@@ -307,7 +319,7 @@ export default function ChatbotPage() {
               transition: 'all 0.2s',
             }}
           >
-            {s.length > 30 ? s.slice(0, 30) + '...' : s}
+            {s}
           </button>
         ))}
       </div>
@@ -320,14 +332,14 @@ export default function ChatbotPage() {
       }}>
         <input
           className="input-field"
-          placeholder="Nhập giao dịch hoặc câu hỏi... (VD: mua trà sữa 35k lúc 3h chiều)"
+          placeholder="Nhập nội dung giao dịch hoặc câu hỏi..."
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleSend()}
           style={{ flex: 1 }}
         />
         <button className="btn-primary" onClick={handleSend} disabled={!input.trim()}>
-          Gửi ↑
+          Gửi
         </button>
       </div>
     </div>

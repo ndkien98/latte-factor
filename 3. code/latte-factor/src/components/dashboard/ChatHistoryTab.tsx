@@ -2,6 +2,7 @@
 
 import type { ChatMessage } from '../../types';
 import { useChatStore } from '../../store/chatStore';
+import { IconTrash, IconBot, IconUser } from '../common/Icons';
 
 interface Props {
   messages: ChatMessage[];
@@ -14,27 +15,28 @@ export default function ChatHistoryTab({ messages }: Props) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>
-            <span className="gradient-text">Lịch sử Chatbot</span>
+          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4, color: '#f8fafc' }}>
+            Lịch sử Trò chuyện Trợ lý AI
           </h2>
           <p style={{ color: '#64748b', fontSize: 13 }}>
-            {messages.length} tin nhắn trong lịch sử (xuất Excel để lưu trữ lâu dài)
+            {messages.length} tin nhắn được lưu trữ trong phiên làm việc
           </p>
         </div>
         {messages.length > 0 && (
           <button
             className="btn-danger"
-            onClick={() => { if (confirm('Xóa toàn bộ lịch sử chat?')) clearMessages(); }}
+            onClick={() => { if (confirm('Xóa toàn bộ lịch sử trò chuyện?')) clearMessages(); }}
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           >
-            🗑️ Xóa lịch sử
+            <IconTrash size={15} /> Xóa lịch sử
           </button>
         )}
       </div>
 
       {messages.length === 0 ? (
         <div style={{ color: '#64748b', textAlign: 'center', padding: 60 }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>💬</div>
-          <div>Chưa có lịch sử chat. Hãy thử Chatbot AI!</div>
+          <IconBot size={40} color="#475569" style={{ marginBottom: 12 }} />
+          <div>Chưa có dữ liệu trò chuyện.</div>
         </div>
       ) : (
         <div className="glass-card" style={{ padding: 20, maxHeight: 600, overflowY: 'auto' }}>
@@ -45,13 +47,23 @@ export default function ChatHistoryTab({ messages }: Props) {
                 style={{
                   display: 'flex',
                   flexDirection: msg.role === 'user' ? 'row-reverse' : 'row',
-                  gap: 8,
+                  gap: 10,
                   alignItems: 'flex-start',
                 }}
               >
-                <span style={{ fontSize: 20, flexShrink: 0 }}>
-                  {msg.role === 'user' ? '👤' : '🤖'}
-                </span>
+                <div style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  background: msg.role === 'user' ? 'rgba(99,102,241,0.2)' : 'rgba(255,255,255,0.08)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: msg.role === 'user' ? '#a5b4fc' : '#94a3b8',
+                  flexShrink: 0,
+                }}>
+                  {msg.role === 'user' ? <IconUser size={16} /> : <IconBot size={16} />}
+                </div>
                 <div style={{
                   maxWidth: '75%',
                   padding: '10px 14px',

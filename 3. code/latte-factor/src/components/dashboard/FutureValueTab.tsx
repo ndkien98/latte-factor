@@ -2,6 +2,7 @@
 
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { FVResult } from '../../types';
+import { IconSavings } from '../common/Icons';
 
 const formatVND = (n: number) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n);
@@ -15,7 +16,7 @@ export default function FutureValueTab({ futureValue }: Props) {
   if (!futureValue) {
     return (
       <div style={{ color: '#64748b', textAlign: 'center', padding: 60 }}>
-        <div style={{ fontSize: 48, marginBottom: 12 }}>💰</div>
+        <IconSavings size={40} color="#475569" style={{ marginBottom: 12 }} />
         <div>Cần dữ liệu linh tinh để tính tích lũy tương lai.</div>
       </div>
     );
@@ -32,8 +33,8 @@ export default function FutureValueTab({ futureValue }: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div>
-        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>
-          <span className="gradient-text">Tích lũy Tương lai (Future Value of Annuity)</span>
+        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4, color: '#f8fafc' }}>
+          Tích lũy Tương lai (Future Value of Annuity)
         </h2>
         <p style={{ color: '#64748b', fontSize: 13 }}>
           FV = C × [(1+r)ⁿ − 1] / r &nbsp;|&nbsp; Gửi {formatVND(params.C)}/tháng, lãi {(params.r * 100).toFixed(1)}%/tháng trong {params.n} tháng
@@ -49,14 +50,14 @@ export default function FutureValueTab({ futureValue }: Props) {
           borderTop: '3px solid #10b981',
         }}
       >
-        <div style={{ fontSize: 13, color: '#64748b', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-          Nếu bỏ thói quen linh tinh trong {params.n} tháng, bạn sẽ có
+        <div style={{ fontSize: 12, color: '#64748b', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+          Số tiền tích lũy dự kiến sau {params.n} tháng
         </div>
-        <div style={{ fontSize: 48, fontWeight: 800, color: '#10b981', marginBottom: 8 }}>
+        <div style={{ fontSize: 44, fontWeight: 800, color: '#10b981', marginBottom: 8 }}>
           {formatVND(fv)}
         </div>
-        <div style={{ fontSize: 14, color: '#94a3b8' }}>
-          Bao gồm {formatVND(totalSaved)} tiết kiệm + {formatVND(interestEarned)} lãi
+        <div style={{ fontSize: 13, color: '#94a3b8' }}>
+          Gồm {formatVND(totalSaved)} vốn tiết kiệm + {formatVND(interestEarned)} tiền lãi tích lũy
         </div>
       </div>
 
@@ -76,7 +77,7 @@ export default function FutureValueTab({ futureValue }: Props) {
 
       <div className="glass-card" style={{ padding: 20 }}>
         <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 16, fontWeight: 600 }}>
-          Tăng trưởng tích lũy theo tháng
+          Tăng trưởng tích lũy theo thời gian
         </div>
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart data={chartData} margin={{ top: 10, right: 20, bottom: 10, left: 10 }}>
@@ -100,9 +101,9 @@ export default function FutureValueTab({ futureValue }: Props) {
                 borderRadius: 8,
                 fontSize: 12,
               }}
-              formatter={(v, name) => [formatVND(Number(v)), name === 'fv' ? 'FV tích lũy' : 'Đã tiết kiệm']}
+              formatter={(v, name) => [formatVND(Number(v)), name === 'fv' ? 'FV tích lũy' : 'Vốn tiết kiệm']}
             />
-            <Legend formatter={v => v === 'fv' ? '💰 FV tích lũy' : '💵 Đã tiết kiệm'} wrapperStyle={{ fontSize: 12 }} />
+            <Legend formatter={v => v === 'fv' ? 'FV tích lũy' : 'Vốn tiết kiệm'} wrapperStyle={{ fontSize: 12 }} />
             <Area type="monotone" dataKey="saved" stroke="#6366f1" fill="url(#savedGradient)" strokeWidth={2} />
             <Area type="monotone" dataKey="fv" stroke="#10b981" fill="url(#fvGradient)" strokeWidth={2} />
           </AreaChart>

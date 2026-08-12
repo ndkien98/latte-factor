@@ -1,16 +1,22 @@
-// src/App.tsx — Root application component with page routing
+// src/App.tsx — Root application component with page routing & db.json sync
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from './components/layout/Sidebar';
 import DashboardPage from './pages/DashboardPage';
 import InputPage from './pages/InputPage';
 import ChatbotPage from './pages/ChatbotPage';
 import SettingsPage from './pages/SettingsPage';
+import { syncFromFileDatabase } from './services/backupService';
 
 type Page = 'dashboard' | 'input' | 'chatbot' | 'config';
 
 export default function App() {
   const [activePage, setActivePage] = useState<Page>('dashboard');
+
+  useEffect(() => {
+    // Sync with db.json file on initial startup
+    syncFromFileDatabase();
+  }, []);
 
   return (
     <div
