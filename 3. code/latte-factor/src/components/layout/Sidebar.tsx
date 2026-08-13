@@ -91,6 +91,7 @@ export default function Sidebar({ activePage, onNavigate }: SidebarProps) {
         <div style={{ fontSize: 11, color: '#475569', textAlign: 'center', lineHeight: 1.6 }}>
           <div style={{ fontWeight: 600, color: '#64748b' }}>Latte Factor Engine v1.0</div>
           <div>Client-Side Analytics</div>
+          <div style={{ marginTop: 2, color: '#4f5e74', fontWeight: 500 }}>Tác giả: kiennd25</div>
         </div>
       </div>
     </aside>

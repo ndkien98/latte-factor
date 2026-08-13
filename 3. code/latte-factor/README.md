@@ -163,6 +163,35 @@ npm run test:coverage
 
 ---
 
+## 🌐 Triển khai (Deployment)
+
+Dự án sử dụng **Firebase Hosting** để lưu trữ ứng dụng web tĩnh với hiệu năng cao và độ bảo mật tốt.
+
+### 1. Triển khai bằng Script tự động (Một click chuột)
+Để biên dịch và cập nhật trang web nhanh chóng, bạn chỉ cần nhấp đúp vào tệp tin **[deploy.bat](file:///d:/person_work/latte-factor/deploy.bat)** ở thư mục gốc của repository.
+
+### 2. Triển khai thủ công từ dòng lệnh
+Nếu bạn muốn tự chạy các lệnh bằng tay từ terminal, hãy làm theo hướng dẫn dưới đây:
+
+**Bước A: Đăng nhập Firebase (chỉ làm lần đầu tiên)**
+```bash
+npx firebase-tools login
+```
+
+**Bước B: Chạy build và deploy**
+```bash
+# Di chuyển vào thư mục code (nếu chưa ở đây)
+cd "3. code/latte-factor"
+
+# Chạy deploy tự động
+npm run deploy
+```
+
+*Địa chỉ trang web sau khi deploy thành công:* [https://late-factor.web.app](https://late-factor.web.app)
+
+---
+
 ## 📝 Giấy phép
 
 Dự án phát triển phục vụ mục đích nghiên cứu KHKT và quản lý tài chính cá nhân.
+

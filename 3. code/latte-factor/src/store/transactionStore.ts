@@ -8,6 +8,7 @@ import { saveDatabaseToFile } from '../services/backupService';
 interface TransactionState {
   transactions: Transaction[];
   categories: Category[];
+  isInitialized: boolean;
 
   addTransaction: (t: Transaction) => void;
   updateTransaction: (id: string, updates: Partial<Transaction>) => void;
@@ -37,6 +38,7 @@ export const useTransactionStore = create<TransactionState>()(
     (set) => ({
       transactions: [],
       categories: DEFAULT_CATEGORIES,
+      isInitialized: false,
 
       addTransaction: (t) => {
         set((state) => ({
@@ -104,7 +106,7 @@ export const useTransactionStore = create<TransactionState>()(
       },
 
       clearAll: () => {
-        set({ transactions: [], categories: DEFAULT_CATEGORIES });
+        set({ transactions: [], categories: DEFAULT_CATEGORIES, isInitialized: true });
         setTimeout(() => saveDatabaseToFile(), 100);
       },
     }),

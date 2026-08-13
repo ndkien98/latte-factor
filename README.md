@@ -31,4 +31,17 @@ npm run test
 
 Địa chỉ ứng dụng khi chạy local: `http://localhost:5173/`
 
-Vui lòng tham khảo tài liệu chi tiết cấu trúc source code tại [3. code/latte-factor/README.md](file:///D:/person_work/latte-factor/3.%20code/latte-factor/README.md).
+---
+
+## 🌐 Triển khai (Deployment) lên Firebase
+
+Dự án được tích hợp sẵn cấu hình triển khai lên Firebase Hosting miễn phí.
+
+### Tập lệnh tự động hóa:
+Để xây dựng (build) và triển khai phiên bản code mới nhất, bạn chỉ cần nhấp đúp (double-click) vào tệp **[deploy.bat](file:///d:/person_work/latte-factor/deploy.bat)** tại thư mục gốc. Script này sẽ tự động:
+1. Chạy quá trình build ứng dụng (`npm run build`).
+2. Tự động xác thực thông qua tệp Service Account JSON Key có sẵn tại thư mục `4. key/firebase`.
+3. Tải ứng dụng lên Firebase Hosting dự án `late-factor`.
+
+*Lưu ý: Nếu bạn muốn chạy triển khai thủ công từ dòng lệnh, bạn có thể tham khảo thêm hướng dẫn chi tiết tại [3. code/latte-factor/README.md](file:///D:/person_work/latte-factor/3.%20code/latte-factor/README.md).*
+

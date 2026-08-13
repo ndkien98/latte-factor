@@ -118,50 +118,44 @@ export async function saveDatabaseToFile(): Promise<boolean> {
 // 4. Fetch database from src/data/db.json on app startup
 export async function syncFromFileDatabase(): Promise<boolean> {
   try {
-    let data: any = null;
     const res = await fetch('/api/db');
     if (res.ok) {
-      data = await res.json();
-    } else {
-      data = initialDbData;
-    }
-
-    if (data) {
-      if (Array.isArray(data.transactions) && data.transactions.length > 0) {
-        useTransactionStore.getState().setTransactions(
-          data.transactions.map((t: any) => ({
-            ...t,
-            timestamp: new Date(t.timestamp),
-          }))
-        );
-      } else if (useTransactionStore.getState().transactions.length === 0 && Array.isArray(initialDbData.transactions)) {
-        useTransactionStore.getState().setTransactions(
-          initialDbData.transactions.map((t: any) => ({
-            ...t,
-            timestamp: new Date(t.timestamp),
-          }))
-        );
+      const data = await res.json();
+      if (data) {
+        if (Array.isArray(data.transactions)) {
+          useTransactionStore.getState().setTransactions(
+            data.transactions.map((t: any) => ({
+              ...t,
+              timestamp: new Date(t.timestamp),
+            }))
+          );
+        }
+        if (Array.isArray(data.categories) && data.categories.length > 0) {
+          useTransactionStore.setState({ categories: data.categories });
+        }
+        if (data.params) {
+          useAlgorithmParamsStore.setState({ params: data.params });
+        }
+        if (Array.isArray(data.chatMessages)) {
+          useChatStore.setState({
+            messages: data.chatMessages.map((m: any) => ({
+              ...m,
+              timestamp: new Date(m.timestamp),
+            })),
+          });
+        }
+        useTransactionStore.setState({ isInitialized: true });
+        return true;
       }
-
-      if (Array.isArray(data.categories) && data.categories.length > 0) {
-        useTransactionStore.setState({ categories: data.categories });
-      }
-      if (data.params) {
-        useAlgorithmParamsStore.setState({ params: data.params });
-      }
-      if (Array.isArray(data.chatMessages) && data.chatMessages.length > 0) {
-        useChatStore.setState({
-          messages: data.chatMessages.map((m: any) => ({
-            ...m,
-            timestamp: new Date(m.timestamp),
-          })),
-        });
-      }
-      return true;
     }
   } catch {
-    // fallback to initial sample data if offline
-    if (useTransactionStore.getState().transactions.length === 0) {
+    // Offline or production environment - skip dev sync
+  }
+
+  // Fallback ONLY on first-time visit (when isInitialized is false)
+  const isInitialized = useTransactionStore.getState().isInitialized;
+  if (!isInitialized) {
+    if (Array.isArray(initialDbData.transactions)) {
       useTransactionStore.getState().setTransactions(
         initialDbData.transactions.map((t: any) => ({
           ...t,
@@ -169,7 +163,24 @@ export async function syncFromFileDatabase(): Promise<boolean> {
         }))
       );
     }
+    if (Array.isArray(initialDbData.categories) && initialDbData.categories.length > 0) {
+      useTransactionStore.setState({ categories: initialDbData.categories as any });
+    }
+    if (initialDbData.params) {
+      useAlgorithmParamsStore.setState({ params: initialDbData.params });
+    }
+    if (Array.isArray(initialDbData.chatMessages)) {
+      useChatStore.setState({
+        messages: initialDbData.chatMessages.map((m: any) => ({
+          ...m,
+          timestamp: new Date(m.timestamp),
+        })),
+      });
+    }
+    useTransactionStore.setState({ isInitialized: true });
+    return true;
   }
+
   return false;
 }
 
