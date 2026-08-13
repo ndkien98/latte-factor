@@ -190,7 +190,7 @@ export default function InputPage() {
         {tab === 'form' && (
           <div className="glass-card" style={{ padding: 24 }}>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label style={{ fontSize: 12, color: '#94a3b8', display: 'block', marginBottom: 6 }}>
                     Số tiền (VNĐ) *
@@ -226,7 +226,7 @@ export default function InputPage() {
                   onChange={e => setForm(f => ({ ...f, note: e.target.value }))}
                 />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label style={{ fontSize: 12, color: '#94a3b8', display: 'block', marginBottom: 6 }}>
                     Danh mục chi tiêu

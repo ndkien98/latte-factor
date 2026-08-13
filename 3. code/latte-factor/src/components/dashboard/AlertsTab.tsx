@@ -38,12 +38,8 @@ export default function AlertsTab({ rules }: Props) {
       </div>
 
       <div
-        className="glass-card"
+        className="glass-card flex flex-col sm:flex-row sm:items-center p-4 gap-4"
         style={{
-          padding: 16,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 14,
           borderLeft: `4px solid ${notifGranted ? '#10b981' : '#f59e0b'}`,
         }}
       >

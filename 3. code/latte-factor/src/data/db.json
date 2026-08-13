@@ -1,6 +1,33 @@
 {
   "transactions": [
     {
+      "id": "09416c3d-ea5d-4007-823d-ad45687ae4c2",
+      "amount": 150000,
+      "timestamp": "2026-08-13T15:38:57.062Z",
+      "note": "trà sữa 150k",
+      "source": "chatbot",
+      "label": "latte",
+      "confidence": 0.9112147070000268
+    },
+    {
+      "id": "5022e7a2-9608-4fe1-b0d4-0897a242d741",
+      "amount": 90000,
+      "timestamp": "2026-08-13T15:38:30.393Z",
+      "note": "tạo đơn 90k",
+      "source": "chatbot",
+      "label": "essential",
+      "confidence": 0.8373138114739246
+    },
+    {
+      "id": "63fea205-05a4-40ef-baed-e9a3a279e952",
+      "amount": 90000,
+      "timestamp": "2026-08-13T15:38:19.242Z",
+      "note": "tạo đơn 90k",
+      "source": "chatbot",
+      "label": "essential",
+      "confidence": 0.534828300191428
+    },
+    {
       "id": "fd919ac2-a7fe-4ddb-bd55-43530c74923b",
       "amount": 7000000,
       "timestamp": "2026-08-12T15:44:08.637Z",
@@ -222,6 +249,103 @@
       "role": "bot",
       "content": "Đã lưu giao dịch 7.000.000 ₫ vào hệ thống!",
       "timestamp": "2026-08-12T15:44:13.861Z"
+    },
+    {
+      "id": "3f4c0a69-3066-4a9f-9f21-666910481608",
+      "role": "user",
+      "content": "tạo đơn 90k",
+      "timestamp": "2026-08-13T15:38:19.241Z"
+    },
+    {
+      "id": "32d99085-8f23-48e9-8371-70078e8d8f48",
+      "role": "bot",
+      "content": "Đã ghi nhận giao dịch: 90.000 ₫ — 22:38 13-08\n\nPhân loại dự đoán: Chi tiêu thiết yếu (Độ tin cậy: 53%)\n\nBạn có thể điều chỉnh nhãn bên dưới để giúp mô hình AI nâng cao độ chính xác.",
+      "timestamp": "2026-08-13T15:38:19.243Z",
+      "intent": "add_transaction",
+      "relatedTransaction": {
+        "id": "63fea205-05a4-40ef-baed-e9a3a279e952",
+        "amount": 90000,
+        "timestamp": "2026-08-13T15:38:19.242Z",
+        "note": "tạo đơn 90k",
+        "source": "chatbot",
+        "label": "essential",
+        "confidence": 0.534828300191428
+      }
+    },
+    {
+      "id": "c63da6e3-f944-4524-bd79-94ddafbd76e5",
+      "role": "bot",
+      "content": "Đã lưu giao dịch 90.000 ₫ vào hệ thống!",
+      "timestamp": "2026-08-13T15:38:23.057Z"
+    },
+    {
+      "id": "1f08ce7c-62e9-41a0-a8ea-679ad7f5fdc8",
+      "role": "user",
+      "content": "tạo đơn 90k",
+      "timestamp": "2026-08-13T15:38:30.393Z"
+    },
+    {
+      "id": "f31849f4-88af-4f29-b1bf-e277ccba471f",
+      "role": "bot",
+      "content": "Đã ghi nhận giao dịch: 90.000 ₫ — 22:38 13-08\n\nPhân loại dự đoán: Chi tiêu thiết yếu (Độ tin cậy: 84%)\n\nBạn có thể điều chỉnh nhãn bên dưới để giúp mô hình AI nâng cao độ chính xác.",
+      "timestamp": "2026-08-13T15:38:30.394Z",
+      "intent": "add_transaction",
+      "relatedTransaction": {
+        "id": "5022e7a2-9608-4fe1-b0d4-0897a242d741",
+        "amount": 90000,
+        "timestamp": "2026-08-13T15:38:30.393Z",
+        "note": "tạo đơn 90k",
+        "source": "chatbot",
+        "label": "essential",
+        "confidence": 0.8373138114739246
+      }
+    },
+    {
+      "id": "3c5279f0-44a5-4167-95b5-dff1b85d0a97",
+      "role": "bot",
+      "content": "Đã lưu giao dịch 90.000 ₫ vào hệ thống!",
+      "timestamp": "2026-08-13T15:38:32.587Z"
+    },
+    {
+      "id": "67198e41-ed52-4a48-81bb-f242da5c90b6",
+      "role": "user",
+      "content": "mua trà sữa",
+      "timestamp": "2026-08-13T15:38:47.476Z"
+    },
+    {
+      "id": "c72e012d-0657-4fee-9528-1abc76dd7f3d",
+      "role": "bot",
+      "content": "Hệ thống chưa nhận diện rõ yêu cầu. Bạn có thể gõ \"help\" để xem câu lệnh mẫu hoặc nhập giao dịch trực tiếp (VD: \"mua trà sữa 35k lúc 3h chiều\").",
+      "timestamp": "2026-08-13T15:38:47.477Z",
+      "intent": "unknown"
+    },
+    {
+      "id": "f0004bf0-e04a-4586-a6e8-018e71b8b7e3",
+      "role": "user",
+      "content": "trà sữa 150k",
+      "timestamp": "2026-08-13T15:38:57.062Z"
+    },
+    {
+      "id": "9415f9fa-e145-48d8-a29c-28fb026ab855",
+      "role": "bot",
+      "content": "Đã ghi nhận giao dịch: 150.000 ₫ — 22:38 13-08\n\nPhân loại dự đoán: Chi tiêu linh tinh (Latte Factor) (Độ tin cậy: 91%)\n\nBạn có thể điều chỉnh nhãn bên dưới để giúp mô hình AI nâng cao độ chính xác.",
+      "timestamp": "2026-08-13T15:38:57.063Z",
+      "intent": "add_transaction",
+      "relatedTransaction": {
+        "id": "09416c3d-ea5d-4007-823d-ad45687ae4c2",
+        "amount": 150000,
+        "timestamp": "2026-08-13T15:38:57.062Z",
+        "note": "trà sữa 150k",
+        "source": "chatbot",
+        "label": "latte",
+        "confidence": 0.9112147070000268
+      }
+    },
+    {
+      "id": "78d4d319-9782-4cb3-98b5-08406c4fe59b",
+      "role": "bot",
+      "content": "Đã lưu giao dịch 150.000 ₫ vào hệ thống!",
+      "timestamp": "2026-08-13T15:39:09.468Z"
     }
   ]
 }

@@ -168,7 +168,7 @@ npm run test:coverage
 Dự án sử dụng **Firebase Hosting** để lưu trữ ứng dụng web tĩnh với hiệu năng cao và độ bảo mật tốt.
 
 ### 1. Triển khai bằng Script tự động (Một click chuột)
-Để biên dịch và cập nhật trang web nhanh chóng, bạn chỉ cần nhấp đúp vào tệp tin **[deploy.bat](file:///d:/person_work/latte-factor/deploy.bat)** ở thư mục gốc của repository.
+Để biên dịch và cập nhật trang web nhanh chóng, bạn chỉ cần nhấp đúp vào tệp tin **[build-and-deploy.bat](file:///d:/person_work/latte-factor/build-and-deploy.bat)** ở thư mục gốc của repository.
 
 ### 2. Triển khai thủ công từ dòng lệnh
 Nếu bạn muốn tự chạy các lệnh bằng tay từ terminal, hãy làm theo hướng dẫn dưới đây:

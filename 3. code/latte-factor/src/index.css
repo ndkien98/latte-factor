@@ -200,3 +200,36 @@ input[type="datetime-local"].input-field::-webkit-calendar-picker-indicator {
 .animate-fade-slide-up {
   animation: fadeSlideUp 0.35s ease both;
 }
+
+/* Microphone Pulsing Animation */
+@keyframes micPulse {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+.animate-mic-pulse {
+  animation: micPulse 1.5s infinite;
+  background: rgba(239, 68, 68, 0.2) !important;
+  border-color: rgba(239, 68, 68, 0.5) !important;
+  color: #ef4444 !important;
+}
+
+/* Responsive Helper Rules */
+.sidebar-desktop {
+  display: flex !important;
+}
+.sidebar-mobile {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  .sidebar-desktop {
+    display: none !important;
+  }
+  .sidebar-mobile {
+    display: flex !important;
+  }
+  main {
+    padding-bottom: 74px !important;
+  }
+}

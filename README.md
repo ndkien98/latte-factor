@@ -38,7 +38,7 @@ npm run test
 Dự án được tích hợp sẵn cấu hình triển khai lên Firebase Hosting miễn phí.
 
 ### Tập lệnh tự động hóa:
-Để xây dựng (build) và triển khai phiên bản code mới nhất, bạn chỉ cần nhấp đúp (double-click) vào tệp **[deploy.bat](file:///d:/person_work/latte-factor/deploy.bat)** tại thư mục gốc. Script này sẽ tự động:
+Để xây dựng (build) và triển khai phiên bản code mới nhất, bạn chỉ cần nhấp đúp (double-click) vào tệp **[build-and-deploy.bat](file:///d:/person_work/latte-factor/build-and-deploy.bat)** tại thư mục gốc. Script này sẽ tự động:
 1. Chạy quá trình build ứng dụng (`npm run build`).
 2. Tự động xác thực thông qua tệp Service Account JSON Key có sẵn tại thư mục `4. key/firebase`.
 3. Tải ứng dụng lên Firebase Hosting dự án `late-factor`.

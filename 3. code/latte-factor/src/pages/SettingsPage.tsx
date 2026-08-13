@@ -108,7 +108,7 @@ export default function SettingsPage() {
   return (
     <div style={{ flex: 1, overflow: 'auto', padding: 24 }}>
       <div style={{ maxWidth: 720, margin: '0 auto' }}>
-        <div style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
           <div>
             <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4, color: '#f8fafc' }}>
               Cấu hình Tham số Thuật toán
@@ -156,7 +156,7 @@ export default function SettingsPage() {
 
         <div className="glass-card" style={{ padding: 24, ...SECTION_STYLE }}>
           <div style={SECTION_TITLE}>4. Future Value of Annuity</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label style={{ fontSize: 13, color: '#94a3b8', display: 'block', marginBottom: 6 }}>Lãi suất định kỳ r (%/tháng)</label>
               <input

@@ -1,8 +1,11 @@
 @echo off
 echo ==============================================
-echo  LATTE FACTOR DETECTOR - TU DONG BUILD & DEPLOY
+echo  LATTE FACTOR DETECTOR - TU DONG BUILD ^& DEPLOY
 echo ==============================================
 echo.
+
+:: Dam bao lam viec tai thu muc chua file script nay
+cd /d "%~dp0"
 
 :: 1. Build project
 echo [1/3] Dang bien dich va dong goi (build) ung dung...
@@ -18,12 +21,12 @@ cd ..
 :: 2. Set credentials
 echo.
 echo [2/3] Cau hinh thong tin xac thuc Firebase...
-set GOOGLE_APPLICATION_CREDENTIALS=d:\person_work\latte-factor\4. key\firebase\late-factor-firebase-adminsdk-fbsvc-360f112217.json
+set GOOGLE_APPLICATION_CREDENTIALS=%~dp04. key\firebase\late-factor-firebase-adminsdk-fbsvc-360f112217.json
 
 :: 3. Deploy
 echo.
 echo [3/3] Dang tai len (deploy) Firebase Hosting...
-call npx firebase-tools deploy --only hosting --non-interactive
+call npx -y firebase-tools deploy --only hosting --non-interactive
 if %ERRORLEVEL% NEQ 0 (
     echo.
     echo [LOI] Qua trinh deploy Firebase gap loi!

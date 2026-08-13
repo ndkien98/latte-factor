@@ -73,7 +73,16 @@ export default function DashboardPage() {
         gap: 16,
         flexWrap: 'wrap',
       }}>
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+        <div style={{
+          display: 'flex',
+          gap: 6,
+          overflowX: 'auto',
+          flexWrap: 'nowrap',
+          width: '100%',
+          scrollbarWidth: 'none',
+          WebkitOverflowScrolling: 'touch',
+          paddingBottom: 4
+        }}>
           {TABS.map(tab => {
             const isActive = activeTab === tab.id;
             return (

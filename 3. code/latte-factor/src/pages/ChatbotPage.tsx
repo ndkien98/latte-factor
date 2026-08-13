@@ -7,7 +7,7 @@ import { NaiveBayesClassifier } from '../algorithms/naiveBayes';
 import { detectIntent } from '../nlp/intentDetector';
 import type { ChatMessage, Transaction, TransactionLabel } from '../types';
 import { v4 as uuidv4 } from 'uuid';
-import { IconBot, IconUser, IconCheck } from '../components/common/Icons';
+import { IconBot, IconUser, IconCheck, IconMicrophone } from '../components/common/Icons';
 
 function buildClassifier(transactions: Transaction[]): NaiveBayesClassifier {
   const clf = new NaiveBayesClassifier();
@@ -65,6 +65,39 @@ function generateBotResponse(
     };
   }
 
+  if (intent.intent === 'query_transactions' && intent.extractedData) {
+    const { startDate, endDate, description } = intent.extractedData;
+    const filtered = transactions.filter(t => {
+      const ts = new Date(t.timestamp).getTime();
+      return ts >= startDate.getTime() && ts <= endDate.getTime();
+    });
+
+    if (filtered.length === 0) {
+      return {
+        text: `Tôi không tìm thấy giao dịch nào trong khoảng thời gian: ${description}.`,
+      };
+    }
+
+    const txList = filtered
+      .map(t => {
+        const time = new Date(t.timestamp).toLocaleDateString('vi-VN', {
+          day: '2-digit',
+          month: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+        const labelText = t.label === 'latte' ? 'Linh tinh (Latte)' : 'Thiết yếu';
+        return `• ${time}: ${t.note} (${formatVND(t.amount)}) — Phân loại: ${labelText}`;
+      })
+      .join('\n');
+
+    const totalFiltered = filtered.reduce((sum, t) => sum + t.amount, 0);
+
+    return {
+      text: `Danh sách giao dịch tìm thấy ${description} (${filtered.length} giao dịch, tổng cộng ${formatVND(totalFiltered)}):\n\n${txList}`,
+    };
+  }
+
   if (intent.intent === 'set_budget') {
     return {
       text: `Đã ghi nhận ý định thiết lập ngân sách ${intent.extractedData?.amount ? formatVND(intent.extractedData.amount) : ''}. Bạn có thể vào phần Cấu hình để điều chỉnh bài toán 0/1 Knapsack.`,
@@ -85,7 +118,7 @@ function generateBotResponse(
 
   if (intent.intent === 'help') {
     return {
-      text: `Hướng dẫn tương tác với Trợ lý AI:\n\n• Thêm giao dịch: "hôm nay mua trà sữa 35k lúc 3h chiều"\n• Tra cứu báo cáo: "thống kê chi tiêu tháng này"\n• Hỏi xu hướng: "xu hướng chi tiêu của tôi thế nào"\n• Dự báo tích lũy: "nếu tiết kiệm trà sữa thì được bao nhiêu"\n\nHệ thống kết hợp thuật toán Naive Bayes NLP và bộ quy tắc nhận diện ý định.`,
+      text: `Hướng dẫn tương tác với Trợ lý AI:\n\n• Thêm giao dịch: "hôm nay mua trà sữa 35k lúc 3h chiều"\n• Lịch sử giao dịch: "lịch sử chi tiêu 3 ngày qua", "xem lại giao dịch tháng này"\n• Tra cứu báo cáo: "thống kê chi tiêu tháng này"\n• Hỏi xu hướng: "xu hướng chi tiêu của tôi thế nào"\n• Dự báo tích lũy: "nếu tiết kiệm trà sữa thì được bao nhiêu"\n\nHệ thống kết hợp thuật toán Naive Bayes NLP và bộ quy tắc nhận diện ý định.`,
     };
   }
 
@@ -100,6 +133,51 @@ export default function ChatbotPage() {
   const [input, setInput] = useState('');
   const [pendingTx, setPendingTx] = useState<{ msgId: string; tx: Transaction } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const rec = new SpeechRecognition();
+      rec.continuous = false;
+      rec.interimResults = false;
+      rec.lang = 'vi-VN';
+
+      rec.onstart = () => {
+        setIsListening(true);
+      };
+
+      rec.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(prev => prev + (prev ? ' ' : '') + transcript);
+      };
+
+      rec.onerror = (event: any) => {
+        console.error('Speech recognition error', event.error);
+        setIsListening(false);
+      };
+
+      rec.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current = rec;
+    }
+  }, []);
+
+  const toggleListen = () => {
+    if (!recognitionRef.current) {
+      alert('Trình duyệt của bạn không hỗ trợ nhận diện giọng nói Web Speech API (khuyên dùng Chrome, Edge hoặc Safari).');
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+    } else {
+      recognitionRef.current.start();
+    }
+  };
 
   const clf = React.useMemo(() => buildClassifier(transactions), [transactions.length]);
 
@@ -112,7 +190,7 @@ export default function ChatbotPage() {
       addMessage({
         id: uuidv4(),
         role: 'bot',
-        content: 'Xin chào! Tôi là Trợ lý Tài chính AI — hỗ trợ bạn ghi nhận và phân loại giao dịch bằng thuật toán NLP Naive Bayes.\n\nNhập giao dịch mẫu: "hôm nay mua trà sữa 35k lúc 3h chiều"',
+        content: 'Xin chào! Tôi là Trợ lý Tài chính AI — hỗ trợ bạn ghi nhận và phân loại giao dịch bằng thuật toán NLP Naive Bayes.\n\nNhập giao dịch mẫu: "hôm nay mua trà sữa 35k lúc 3h chiều"\n\nBạn cũng có thể xem lại lịch sử giao dịch bằng các câu như: "lịch sử chi tiêu 3 ngày qua", "xem lại giao dịch tháng này", "danh sách đã chi hôm nay"...',
         timestamp: new Date(),
       });
     }
@@ -302,7 +380,7 @@ export default function ChatbotPage() {
         {[
           'hôm nay mua trà sữa 35k lúc 3h chiều',
           'thống kê chi tiêu tháng này',
-          'xu hướng chi tiêu của tôi',
+          'lịch sử chi tiêu 3 ngày qua',
           'help',
         ].map(s => (
           <button
@@ -338,6 +416,20 @@ export default function ChatbotPage() {
           onKeyDown={e => e.key === 'Enter' && handleSend()}
           style={{ flex: 1 }}
         />
+        <button
+          className={`btn-secondary ${isListening ? 'animate-mic-pulse' : ''}`}
+          onClick={toggleListen}
+          title={isListening ? 'Đang nghe... Nhấp để dừng' : 'Nhập liệu bằng giọng nói'}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '10px 12px',
+            borderRadius: 8,
+          }}
+        >
+          <IconMicrophone size={18} color={isListening ? '#ef4444' : '#94a3b8'} />
+        </button>
         <button className="btn-primary" onClick={handleSend} disabled={!input.trim()}>
           Gửi
         </button>

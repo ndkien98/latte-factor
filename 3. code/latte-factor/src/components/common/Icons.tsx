@@ -188,3 +188,29 @@ export function IconBot({ size = 18, color = 'currentColor', ...props }: IconPro
     </svg>
   );
 }
+
+export function IconMicrophone({ size = 18, color = 'currentColor', ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+      <path d="M19 10v1a7 7 0 0 1-14 0v-1" />
+      <line x1="12" y1="19" x2="12" y2="22" />
+    </svg>
+  );
+}
+
+export function IconChevronLeft({ size = 18, color = 'currentColor', ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <polyline points="15 18 9 12 15 6" />
+    </svg>
+  );
+}
+
+export function IconChevronRight({ size = 18, color = 'currentColor', ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <polyline points="9 18 15 12 9 6" />
+    </svg>
+  );
+}
